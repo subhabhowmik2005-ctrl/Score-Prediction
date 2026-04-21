@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Score Card Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Student Score Card Prediction</h1>
+        <form action="/predict" method="POST">
+            <div class="form-grid">
+                <!-- Categorical Inputs -->
+                <div class="input-group">
+                    <label for="gender">Gender</label>
+                    <select name="gender" id="gender" required>
+                        {% for option in categories.gender %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="race_ethnicity">Race/Ethnicity</label>
+                    <select name="race_ethnicity" id="race_ethnicity" required>
+                        {% for option in categories.race_ethnicity %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="parental_level_of_education">Parental Education</label>
+                    <select name="parental_level_of_education" id="parental_level_of_education" required>
+                        {% for option in categories.parental_level_of_education %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="lunch">Lunch Type</label>
+                    <select name="lunch" id="lunch" required>
+                        {% for option in categories.lunch %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="test_preparation_course">Test Prep Course</label>
+                    <select name="test_preparation_course" id="test_preparation_course" required>
+                        {% for option in categories.test_preparation_course %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Numeric Inputs -->
+                <div class="input-group">
+                    <label for="math_score">Math Score (0-100)</label>
+                    <input type="number" name="math_score" id="math_score" min="0" max="100" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="reading_score">Reading Score (0-100)</label>
+                    <input type="number" name="reading_score" id="reading_score" min="0" max="100" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="writing_score">Writing Score (0-100)</label>
+                    <input type="number" name="writing_score" id="writing_score" min="0" max="100" value="0" required>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn">Generate Score Card & Predict Grade</button>
+            </div>
+        </form>
+
+        {% if result %}
+        <div id="result" class="result-card">
+            <div class="result-header">Score Card Summary</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Math</div>
+                    <div class="stat-value">{{ result.math }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Reading</div>
+                    <div class="stat-value">{{ result.reading }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Writing</div>
+                    <div class="stat-value">{{ result.writing }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total Score</div>
+                    <div class="stat-value">{{ result.total }} / 300</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Average</div>
+                    <div class="stat-value">{{ result.average }}%</div>
+                </div>
+            </div>
+
+            <div class="grade-box 
+                {% if result.actual_grade == 'High' %}grade-high
+                {% elif result.actual_grade == 'Medium' %}grade-medium
+                {% else %}grade-low{% endif %}">
+                Performance Level: {{ result.actual_grade }}
+            </div>
+
+            <div class="prediction-box">
+                <strong>Model Prediction based on Background:</strong> 
+                The ML model predicts a <strong>{{ result.predicted_grade }}</strong> performance level based on your demographic profile.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        {% if scroll_to_result %}
+        window.onload = function() {
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        {% endif %}
+    </script>
+</body>
+</html>
