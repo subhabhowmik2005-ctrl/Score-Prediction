@@ -1,7 +1,9 @@
-flask
+Flask
+gunicorn
 pandas
 numpy
 scikit-learn
 xgboost
 joblib
-requests
+
+
